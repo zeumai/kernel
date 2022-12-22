@@ -1,0 +1,16 @@
+(define car
+    (lambda ((car . cdr))
+        car ))
+
+(define cdr
+    (lambda ((car . cdr))
+        cdr ))
+
+(define list
+    (lambda x x) )
+
+(define map
+    (lambda (fn lst)
+        (if (null? lst)
+            ()
+            (cons (fn (car lst)) (map fn (cdr lst))) )))
