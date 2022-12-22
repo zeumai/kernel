@@ -134,7 +134,10 @@ Object *read_special(FILE *in) {
 
 Object *read(FILE *in) {
     int c = skip_blanks(in);
-    if (c == '(') {
+    if (c == EOF) {
+        quit = true;
+        return NULL;
+    } else if (c == '(') {
         return read_list(in);
     } else if (c == ')') {
         fputs("Reader: Unexpected ')'\n", stderr);

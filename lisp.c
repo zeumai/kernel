@@ -1,7 +1,20 @@
 #include "reader/reader.h"
 #include "evaluator/evaluator.h"
 
-int main(int argc, char *argv[]) {
+static bool load(FILE *in, Environment **e_ptr) {
+    Environment *e = (Environment *)environment(*e_ptr);
+    for (;;) {
+        Object *result = eval(read(in), e);
+        if (quit) {
+            quit = false;
+            *e_ptr = e;
+            return true;
+        }
+        if (is_error(result)) return false;
+    }
+}
+
+static Environment *init_env(void) {
     Environment *e = (Environment *)environment(NULL);
     dict_set(e->bindings, (Symbol *)symbol("if"), primitive(&p_if));
     dict_set(e->bindings, (Symbol *)symbol("quote"), primitive(&p_quote));
@@ -21,10 +34,24 @@ int main(int argc, char *argv[]) {
     dict_set(e->bindings, (Symbol *)symbol("environment?"), applicative(primitive(&p_environment)));
     dict_set(e->bindings, (Symbol *)symbol("number?"), applicative(primitive(&p_number)));
     dict_set(e->bindings, (Symbol *)symbol("string?"), applicative(primitive(&p_string)));
+    FILE *f = fopen("init.kn", "r");
+    if (f == NULL) {
+        fputs("Unable to open \"init.kn\"\n", stderr);
+    } else if (!load(f, &e)) {
+        fputs("Error encountered while loading \"init.kn\"\nBindings discarded\n", stderr);
+    }
+    return e;
+}
+
+int main(int argc, char *argv[]) {
+    Environment *e = init_env();
     for (;;) {
         fputs("> ", stdout);
         Object *result = eval(read(stdin), e);
-        if (quit) break;
+        if (quit) {
+            quit = false;
+            break;
+        }
         write(result, stdout);
         fputs("\n", stdout);
     }
