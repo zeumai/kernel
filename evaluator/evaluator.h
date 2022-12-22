@@ -9,6 +9,7 @@ Object *eval(Object *obj, Environment *e);
 
 Object *p_if(Object *args, Environment *e);
 Object *p_quote(Object *args, Environment *e);
+Object *p_throw(Object *args, Environment *e);
 Object *p_quit(Object *args, Environment *e);
 
 Object *p_define(Object *args, Environment *e);

@@ -5,6 +5,7 @@ int main(int argc, char *argv[]) {
     Environment *e = (Environment *)environment(NULL);
     dict_set(e->bindings, (Symbol *)symbol("if"), primitive(&p_if));
     dict_set(e->bindings, (Symbol *)symbol("quote"), primitive(&p_quote));
+    dict_set(e->bindings, (Symbol *)symbol("error"), applicative(primitive(&p_throw)));
     dict_set(e->bindings, (Symbol *)symbol("quit"), applicative(primitive(&p_quit)));
     dict_set(e->bindings, (Symbol *)symbol("define"), primitive(&p_define));
     dict_set(e->bindings, (Symbol *)symbol("cons"), applicative(primitive(&p_cons)));

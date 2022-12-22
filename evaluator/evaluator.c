@@ -124,6 +124,14 @@ Object *p_lambda(Object *args, Environment *e) {
     return applicative(closure(e, pars, body));
 }
 
+Object *p_throw(Object *args, Environment *e) {
+    Object *msg = next_arg(&args, true);
+    if (is_error(msg)) return msg;
+    write(msg, stderr);
+    fputs("\n", stderr);
+    return error();
+}
+
 Object *p_eq(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
