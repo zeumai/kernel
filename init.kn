@@ -15,8 +15,20 @@
             ()
             (cons (fn (car lst)) (map fn (cdr lst))) )))
 
-(define copy-list
-    (lambda (lst)
+(define filter
+    (lambda (fn lst)
         (if (null? lst)
             ()
-            (cons (car lst) (copy-list (cdr lst))) )))
+            (if (fn (car lst))
+                (cons (car lst) (filter fn (cdr lst)))
+                (filter fn (cdr lst)) ))))
+
+(define reduce
+    (lambda (fn init lst)
+        (if (null? lst)
+            init
+            (fn (car lst) (reduce fn init (cdr lst))) )))
+
+(define append
+    (lambda (lst-1 lst-2)
+        (reduce cons lst-2 lst-1) ))
