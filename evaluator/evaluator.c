@@ -1,5 +1,7 @@
 #include "evaluator.h"
 
+bool tail_call = false;
+
 static Object *next_arg(Object **args, bool final) {
     if (*args == NULL) {
         fputs("Evaluator: Too few args\n", stderr);
@@ -83,15 +85,16 @@ Object *prm_if(Object *args, Environment *e) {
         return error();
     }
     if (((Boolean *)tmp)->value) {
-        ret = eval(next_arg(&args, false), e);
+        ret = next_arg(&args, false);
         if (is_error(ret)) return ret;
         tmp = next_arg(&args, true);
         if (is_error(tmp)) return tmp;
     } else {
         tmp = next_arg(&args, false);
         if (is_error(tmp)) return tmp;
-        ret = eval(next_arg(&args, true), e);
+        ret = next_arg(&args, true);
     }
+    tail_call = true;
     return ret;
 }
 
@@ -157,7 +160,12 @@ START_APPLY:
             fputs("Evaluator: () is not a function\n", stderr);
             return error();
         } else if (fn->type == PRIMITIVE) {
-            return ((Primitive *)fn)->function(args, e);
+            obj = ((Primitive *)fn)->function(args, e);
+            if (tail_call) {
+                tail_call = false;
+                goto START_EVAL;
+            }
+            return obj;
         } else if (fn->type == APPLICATIVE) {
             fn = ((Applicative *)fn)->fn;
             args = eval_args(args, e);
