@@ -12,6 +12,6 @@ Object *prm_lambda(Object *args, Environment *e);
 Object *prm_quote(Object *args, Environment *e);
 Object *prm_eq(Object *args, Environment *e);
 Object *prm_cons(Object *args, Environment *e);
-Object *prm_next(Object *args, Environment *e);
+Object *prm_quit(Object *args, Environment *e);
 
 #endif

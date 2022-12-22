@@ -1,5 +1,7 @@
 #include "object.h"
 
+bool quit = false;
+
 void write(Object *obj, FILE *out) {
     if (obj == NULL) {
         fputs("()", out);

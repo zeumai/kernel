@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+extern bool quit;
+
 typedef enum {
     PAIR,
     SYMBOL,

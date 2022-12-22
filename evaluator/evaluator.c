@@ -123,15 +123,9 @@ Object *prm_cons(Object *args, Environment *e) {
     return pair(car, cdr);
 }
 
-Object *prm_next(Object *args, Environment *e) {
-    Object *obj = next_arg(&args, true); 
-    if (obj == NULL) {
-        fputs("Evaluator: Not a heap-allocated object: ", stderr);
-        write(obj, stderr);
-        fputs("\n", stderr);
-        return error();
-    }
-    return obj->next;
+Object *prm_quit(Object *args, Environment *e) {
+    quit = true;
+    return NULL;
 }
 
 // core evaluator

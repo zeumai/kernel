@@ -9,10 +9,12 @@ int main(int argc, char *argv[]) {
     dict_set(e->bindings, (Symbol *)symbol("quote"), primitive(&prm_quote));
     dict_set(e->bindings, (Symbol *)symbol("eq?"), primitive(&prm_eq));
     dict_set(e->bindings, (Symbol *)symbol("cons"), primitive(&prm_cons));
-    dict_set(e->bindings, (Symbol *)symbol("next"), primitive(&prm_next));
+    dict_set(e->bindings, (Symbol *)symbol("quit"), primitive(&prm_quit));
     for (;;) {
         fputs("> ", stdout);
-        write(eval(read(stdin), e), stdout);
+        Object *result = eval(read(stdin), e);
+        if (quit) break;
+        write(result, stdout);
         fputs("\n", stdout);
     }
     return 0;
