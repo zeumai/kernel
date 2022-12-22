@@ -54,7 +54,7 @@ Object *eval_args(Object *args, Environment *e) {
     Object *head = NULL;
     Object **cursor = &head;
     while (args != NULL) {
-        Object *tmp = next_arg(&args, false);
+        Object *tmp = eval(next_arg(&args, false), e);
         if (is_error(tmp)) return tmp;
         *cursor = pair(tmp, NULL);
         cursor = &(((Pair *)*cursor)->cdr);
