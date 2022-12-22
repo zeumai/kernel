@@ -8,8 +8,8 @@ int main(int argc, char *argv[]) {
     dict_set(e->bindings, (Symbol *)symbol("lambda"), primitive(&prm_lambda));
     dict_set(e->bindings, (Symbol *)symbol("quote"), primitive(&prm_quote));
     dict_set(e->bindings, (Symbol *)symbol("eq?"), applicative(primitive(&prm_eq)));
-    dict_set(e->bindings, (Symbol *)symbol("cons"), primitive(&prm_cons));
-    dict_set(e->bindings, (Symbol *)symbol("quit"), primitive(&prm_quit));
+    dict_set(e->bindings, (Symbol *)symbol("cons"), applicative(primitive(&prm_cons)));
+    dict_set(e->bindings, (Symbol *)symbol("quit"), applicative(primitive(&prm_quit)));
     for (;;) {
         fputs("> ", stdout);
         Object *result = eval(read(stdin), e);
