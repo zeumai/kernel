@@ -1,7 +1,7 @@
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
 
-#include "../types/types.h"
+#include "../types/object.h"
 
 Object *eval(Object *obj, Environment *e);
 

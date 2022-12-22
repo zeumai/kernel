@@ -1,4 +1,4 @@
-#include "string.h"
+#include "object.h"
 #include <string.h>
 
 Object *string(char *text) {

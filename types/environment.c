@@ -1,4 +1,4 @@
-#include "environment.h"
+#include "object.h"
 
 Object *environment(Environment *parent) {
     Environment *e = (Environment *)object(ENVIRONMENT, sizeof *e);

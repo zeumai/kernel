@@ -1,4 +1,4 @@
-#include "dict.h"
+#include "object.h"
 
 Object *dict(void) {
     Dict *d = (Dict *)object(DICT, sizeof *d);

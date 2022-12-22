@@ -1,4 +1,4 @@
-#include "primitive.h"
+#include "object.h"
 
 Object *primitive(Object *(*function)(Object *, Environment *)) {
     Primitive *p = (Primitive *)object(PRIMITIVE, sizeof *p);

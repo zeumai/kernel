@@ -1,4 +1,4 @@
-#include "closure.h"
+#include "object.h"
 
 Object *closure(Environment *e, Object *pars, Object *body) {
     Closure *c = (Closure *)object(CLOSURE, sizeof *c);

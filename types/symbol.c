@@ -1,4 +1,4 @@
-#include "symbol.h"
+#include "object.h"
 #include <string.h>
 
 static Symbol **slots;

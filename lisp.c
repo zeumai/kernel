@@ -10,12 +10,10 @@ int main(int argc, char *argv[]) {
     dict_set(e->bindings, (Symbol *)symbol("eq?"), primitive(&prm_eq));
     dict_set(e->bindings, (Symbol *)symbol("cons"), primitive(&prm_cons));
     dict_set(e->bindings, (Symbol *)symbol("next"), primitive(&prm_next));
-    Object *root = pair((Object *)e, NULL);
     for (;;) {
         fputs("> ", stdout);
         write(eval(read(stdin), e), stdout);
         fputs("\n", stdout);
-        collect(root);
     }
     return 0;
 }

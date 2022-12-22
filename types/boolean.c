@@ -1,4 +1,4 @@
-#include "boolean.h"
+#include "object.h"
 
 Object *boolean(bool value) {
     static Boolean *T, *F;
