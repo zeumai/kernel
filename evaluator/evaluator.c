@@ -66,15 +66,7 @@ Object *eval_args(Object *args, Environment *e) {
 
 // primitives
 
-Object *prm_define(Object *args, Environment *e) {
-    Object *names = next_arg(&args, false);
-    if (is_error(names)) return names;
-    Object *values = eval(next_arg(&args, true), e);
-    if (is_error(values)) return values;
-    return bind(e, names, values);
-}
-
-Object *prm_if(Object *args, Environment *e) {
+Object *p_if(Object *args, Environment *e) {
     Object *tmp, *ret;
     tmp = eval(next_arg(&args, false), e);
     if (is_error(tmp)) return tmp;
@@ -98,27 +90,24 @@ Object *prm_if(Object *args, Environment *e) {
     return ret;
 }
 
-Object *prm_lambda(Object *args, Environment *e) {
-    Object *pars = next_arg(&args, false);
-    if (is_error(pars)) return pars;
-    Object *body = next_arg(&args, true);
-    if (is_error(body)) return body;
-    return applicative(closure(e, pars, body));
-}
-
-Object *prm_quote(Object *args, Environment *e) {
+Object *p_quote(Object *args, Environment *e) {
     return next_arg(&args, true);
 }
 
-Object *prm_eq(Object *args, Environment *e) {
-    Object *left = next_arg(&args, false);
-    if (left != NULL && left->type == ERROR) return left;
-    Object *right = next_arg(&args, true);
-    if (right != NULL && right->type == ERROR) return right;
-    return boolean(left == right);
+Object *p_quit(Object *args, Environment *e) {
+    quit = true;
+    return NULL;
 }
 
-Object *prm_cons(Object *args, Environment *e) {
+Object *p_define(Object *args, Environment *e) {
+    Object *names = next_arg(&args, false);
+    if (is_error(names)) return names;
+    Object *values = eval(next_arg(&args, true), e);
+    if (is_error(values)) return values;
+    return bind(e, names, values);
+}
+
+Object *p_cons(Object *args, Environment *e) {
     Object *car = eval(next_arg(&args, false), e);
     if (is_error(car)) return car;
     Object *cdr = eval(next_arg(&args, true), e);
@@ -126,9 +115,81 @@ Object *prm_cons(Object *args, Environment *e) {
     return pair(car, cdr);
 }
 
-Object *prm_quit(Object *args, Environment *e) {
-    quit = true;
-    return NULL;
+
+Object *p_lambda(Object *args, Environment *e) {
+    Object *pars = next_arg(&args, false);
+    if (is_error(pars)) return pars;
+    Object *body = next_arg(&args, true);
+    if (is_error(body)) return body;
+    return applicative(closure(e, pars, body));
+}
+
+Object *p_eq(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    return boolean(left == right);
+}
+
+Object *p_null(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj == NULL);
+}
+
+Object *p_pair(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == PAIR);
+}
+
+Object *p_symbol(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == SYMBOL);
+}
+
+Object *p_operative(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && (obj->type == PRIMITIVE || obj->type == CLOSURE));
+}
+
+Object *p_applicative(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == APPLICATIVE);
+}
+
+Object *p_boolean(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == BOOLEAN);
+}
+
+Object *p_dict(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == DICT);
+}
+
+Object *p_environment(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == ENVIRONMENT);
+}
+
+Object *p_number(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == NUMBER);
+}
+
+Object *p_string(Object *args, Environment *e) {
+    Object *obj = next_arg(&args, true);
+    if (is_error(obj)) return obj;
+    return boolean(obj != NULL && obj->type == STRING);
 }
 
 // core evaluator
