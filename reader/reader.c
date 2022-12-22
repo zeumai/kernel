@@ -121,6 +121,7 @@ Object *read_special(FILE *in) {
     }
     ungetc(c, in);
     Object *s = read(in);
+    if (is_error(s)) return s;
     if (s == (t ? t : (t = symbol("t")))) {
         return boolean(true);
     } else if (s == (f ? f : (f = symbol("f")))) {
