@@ -14,3 +14,9 @@
         (if (null? lst)
             ()
             (cons (fn (car lst)) (map fn (cdr lst))) )))
+
+(define copy-list
+    (lambda (lst)
+        (if (null? lst)
+            ()
+            (cons (car lst) (copy-list (cdr lst))) )))

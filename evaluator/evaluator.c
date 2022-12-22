@@ -108,9 +108,9 @@ Object *p_define(Object *args, Environment *e) {
 }
 
 Object *p_cons(Object *args, Environment *e) {
-    Object *car = eval(next_arg(&args, false), e);
+    Object *car = next_arg(&args, false);
     if (is_error(car)) return car;
-    Object *cdr = eval(next_arg(&args, true), e);
+    Object *cdr = next_arg(&args, true);
     if (is_error(cdr)) return cdr;
     return pair(car, cdr);
 }
