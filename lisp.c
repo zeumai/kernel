@@ -37,6 +37,11 @@ static Environment *init_env(void) {
     dict_set(e->bindings, (Symbol *)symbol("+"), applicative(primitive(&p_plus)));
     dict_set(e->bindings, (Symbol *)symbol("-"), applicative(primitive(&p_minus)));
     dict_set(e->bindings, (Symbol *)symbol("*"), applicative(primitive(&p_times)));
+    dict_set(e->bindings, (Symbol *)symbol("="), applicative(primitive(&p_num_eq)));
+    dict_set(e->bindings, (Symbol *)symbol("<"), applicative(primitive(&p_num_less)));
+    dict_set(e->bindings, (Symbol *)symbol("<="), applicative(primitive(&p_num_leq)));
+    dict_set(e->bindings, (Symbol *)symbol(">"), applicative(primitive(&p_num_greater)));
+    dict_set(e->bindings, (Symbol *)symbol(">="), applicative(primitive(&p_num_geq)));
     FILE *f = fopen("init.kn", "r");
     if (f == NULL) {
         fputs("Unable to open \"init.kn\"\n", stderr);

@@ -32,5 +32,10 @@ Object *p_string(Object *args, Environment *e);
 Object *p_plus(Object *args, Environment *e);
 Object *p_minus(Object *args, Environment *e);
 Object *p_times(Object *args, Environment *e);
+Object *p_num_eq(Object *args, Environment *e);
+Object *p_num_less(Object *args, Environment *e);
+Object *p_num_leq(Object *args, Environment *e);
+Object *p_num_greater(Object *args, Environment *e);
+Object *p_num_geq(Object *args, Environment *e);
 
 #endif
