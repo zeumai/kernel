@@ -52,7 +52,7 @@ static Environment *init_env(void) {
     } else if (!load(f, &e)) {
         fputs("Error encountered while loading \"init.kn\"\nBindings discarded\n", stderr);
     }
-    return e;
+    return (Environment *)environment(e);
 }
 
 int main(int argc, char *argv[]) {
