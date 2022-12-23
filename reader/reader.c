@@ -153,6 +153,16 @@ Object *read(FILE *in) {
     } else if (c >= '0' && c <= '9') {
         ungetc(c, in);
         return read_number(in);
+    } else if (c == '-') {
+        c = fgetc(in);
+        ungetc(c, in);
+        if (is_blank(c) || c == EOF || c == '(' || c == ')' || c == '.') {
+            return symbol("-");
+        }
+        Object *num = read_number(in);
+        if (is_error(num)) return num;
+        ((Number *)num)->value *= -1;
+        return num;
     } else {
         ungetc(c, in);
         return read_symbol(in);
