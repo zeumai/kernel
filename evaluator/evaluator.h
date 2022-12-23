@@ -29,4 +29,8 @@ Object *p_environment(Object *args, Environment *e);
 Object *p_number(Object *args, Environment *e);
 Object *p_string(Object *args, Environment *e);
 
+Object *p_plus(Object *args, Environment *e);
+Object *p_minus(Object *args, Environment *e);
+Object *p_times(Object *args, Environment *e);
+
 #endif

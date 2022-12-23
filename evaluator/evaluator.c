@@ -200,6 +200,66 @@ Object *p_string(Object *args, Environment *e) {
     return boolean(obj != NULL && obj->type == STRING);
 }
 
+Object *p_plus(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    if (left == NULL || left->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(left, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    if (right == NULL || right->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(right, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return number(((Number *)left)->value + ((Number *)right)->value);
+}
+
+Object *p_minus(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    if (left == NULL || left->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(left, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    if (right == NULL || right->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(right, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return number(((Number *)left)->value - ((Number *)right)->value);
+}
+
+Object *p_times(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    if (left == NULL || left->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(left, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    if (right == NULL || right->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(right, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return number(((Number *)left)->value * ((Number *)right)->value);
+}
+
 // core evaluator
 
 static Object *resolve(Symbol *s, Environment *e) {
