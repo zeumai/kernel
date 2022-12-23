@@ -133,6 +133,18 @@ Object *read_special(FILE *in) {
     return error();
 }
 
+Object *read_dash(FILE *in) {
+    int c = fgetc(in);
+    ungetc(c, in);
+    if (is_blank(c) || c == EOF || c == '(' || c == ')' || c == '.') {
+        return symbol("-");
+    }
+    Object *num = read_number(in);
+    if (is_error(num)) return num;
+    ((Number *)num)->value *= -1;
+    return num;
+}
+
 Object *read(FILE *in) {
     int c = skip_blanks(in);
     if (c == EOF) {
@@ -154,15 +166,7 @@ Object *read(FILE *in) {
         ungetc(c, in);
         return read_number(in);
     } else if (c == '-') {
-        c = fgetc(in);
-        ungetc(c, in);
-        if (is_blank(c) || c == EOF || c == '(' || c == ')' || c == '.') {
-            return symbol("-");
-        }
-        Object *num = read_number(in);
-        if (is_error(num)) return num;
-        ((Number *)num)->value *= -1;
-        return num;
+        return read_dash(in);
     } else {
         ungetc(c, in);
         return read_symbol(in);
