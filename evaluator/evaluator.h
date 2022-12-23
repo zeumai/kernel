@@ -41,5 +41,6 @@ Object *p_num_geq(Object *args, Environment *e);
 Object *p_concat(Object *args, Environment *e);
 Object *p_str_length(Object *args, Environment *e);
 Object *p_substr(Object *args, Environment *e);
+Object *p_str_eq(Object *args, Environment *e);
 
 #endif

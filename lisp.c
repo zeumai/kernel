@@ -45,6 +45,7 @@ static Environment *init_env(void) {
     dict_set(e->bindings, (Symbol *)symbol("concat"), applicative(primitive(&p_concat)));
     dict_set(e->bindings, (Symbol *)symbol("length"), applicative(primitive(&p_str_length)));
     dict_set(e->bindings, (Symbol *)symbol("substring"), applicative(primitive(&p_substr)));
+    dict_set(e->bindings, (Symbol *)symbol("str="), applicative(primitive(&p_str_eq)));
     FILE *f = fopen("init.kn", "r");
     if (f == NULL) {
         fputs("Unable to open \"init.kn\"\n", stderr);

@@ -432,6 +432,37 @@ Object *p_substr(Object *args, Environment *e) {
     return string_substring(((String *)s)->text, ((Number *)start)->value, ((Number *)length)->value);
 }
 
+Object *p_str_eq(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    if (left == NULL || left->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(left, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    if (right == NULL || right->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(right, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    size_t length = ((String *)left)->length;
+    if (length != ((String *)right)->length) {
+        return boolean(false);
+    } 
+    char *txt1 = ((String *)left)->text;
+    char *txt2 = ((String *)right)->text;
+    for (size_t i = 0; i < length; ++i) {
+        if (txt1[i] != txt2[i]) {
+            return boolean(false);
+        }
+    }
+    return boolean(true);
+}
+
 // core evaluator
 
 static Object *resolve(Symbol *s, Environment *e) {
