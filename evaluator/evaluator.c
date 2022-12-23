@@ -1,4 +1,5 @@
 #include "evaluator.h"
+#include <string.h>
 
 bool tail_call = false;
 
@@ -358,6 +359,77 @@ Object *p_num_geq(Object *args, Environment *e) {
         return error();
     }
     return boolean(((Number *)left)->value >= ((Number *)right)->value);
+}
+
+Object *p_concat(Object *args, Environment *e) {
+    Object *left = next_arg(&args, false);
+    if (left != NULL && left->type == ERROR) return left;
+    if (left == NULL || left->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(left, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *right = next_arg(&args, true);
+    if (right != NULL && right->type == ERROR) return right;
+    if (right == NULL || right->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(right, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return string_concat(((String *)left)->text, ((String *)right)->text);
+}
+
+Object *p_str_length(Object *args, Environment *e) {
+    Object *s = next_arg(&args, true);
+    if (is_error(s)) return s;
+    if (s == NULL || s->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(s, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return number(((String *)s)->length);
+}
+
+Object *p_substr(Object *args, Environment *e) {
+    Object *s = next_arg(&args, false);
+    if (is_error(s)) return s;
+    if (s == NULL || s->type != STRING) {
+        fputs("Evaluator: Not a string: ", stderr);
+        write(s, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *start = next_arg(&args, false);
+    if (is_error(start)) return start;
+    if (start == NULL || start->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(start, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    Object *length = next_arg(&args, true);
+    if (is_error(length)) return length;
+    if (length == NULL || length->type != NUMBER) {
+        fputs("Evaluator: Not a number: ", stderr);
+        write(length, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    if ((((Number *)start)->value < 1) 
+        || (((Number *)start)->value + ((Number *)length)->value - 1 > ((String *)s)->length)) {
+        fputs("Evaluator: Invalid substring:\n   Source string:    ", stderr);
+        write(s, stderr);
+        fputs("\n   Substring start:  ", stderr);
+        write(start, stderr);
+        fputs("\n   Substring length: ", stderr);
+        write(length, stderr);
+        fputs("\n", stderr);
+        return error();
+    }
+    return string_substring(((String *)s)->text, ((Number *)start)->value, ((Number *)length)->value);
 }
 
 // core evaluator

@@ -122,5 +122,7 @@ typedef struct String {
 } String;
 
 Object *string(char *text);
+Object *string_concat(char *txt1, char *txt2);
+Object *string_substring(char *text, size_t start, size_t length);
 
 #endif
