@@ -9,6 +9,10 @@
 (define list
     (lambda x x) )
 
+(define not
+    (lambda (exp)
+        (if exp #f #t) ))
+
 (define map
     (lambda (fn lst)
         (if (null? lst)
