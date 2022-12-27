@@ -1,16 +1,16 @@
 #include "reader.h"
 
-bool is_blank(int c) {
+static bool is_blank(int c) {
     return c == ' ' || c == '\n' || c == '\r' || c == '\t';
 }
 
-int skip_blanks(FILE *in) {
+static int skip_blanks(FILE *in) {
     int c;
     for (c = fgetc(in); is_blank(c); c = fgetc(in));
     return c;
 }
 
-Object *read_symbol(FILE *in) {
+static Object *read_symbol(FILE *in) {
     char *text = NULL;
     size_t capacity = 0, i = 0;
     for(int c = fgetc(in);; c = fgetc(in)) {
@@ -34,7 +34,7 @@ Object *read_symbol(FILE *in) {
     }
 }
 
-Object *read_list(FILE *in) {
+static Object *read_list(FILE *in) {
     Object *list = NULL;
     Pair *cursor = NULL;
     for (int c = skip_blanks(in); c != EOF; c = skip_blanks(in)) {
@@ -68,7 +68,7 @@ Object *read_list(FILE *in) {
     return error();
 }
 
-Object *read_string(FILE *in) {
+static Object *read_string(FILE *in) {
     char *text = NULL;
     size_t capacity = 0, i = 0;
     for(int c = fgetc(in); c != EOF; c = fgetc(in)) {
@@ -93,7 +93,7 @@ Object *read_string(FILE *in) {
     return error();
 }
 
-Object *read_number(FILE *in) {
+static Object *read_number(FILE *in) {
     int64_t value = 0;
     for(int c = fgetc(in);; c = fgetc(in)) {
         if (is_blank(c) || c == EOF || c == '(' || c == ')' || c == '.') {
@@ -111,7 +111,7 @@ Object *read_number(FILE *in) {
     }
 }
 
-Object *read_special(FILE *in) {
+static Object *read_special(FILE *in) {
     static Object *t, *f;
     int c = skip_blanks(in);
     if (c == '<') {
@@ -133,7 +133,7 @@ Object *read_special(FILE *in) {
     return error();
 }
 
-Object *read_dash(FILE *in) {
+static Object *read_dash(FILE *in) {
     int c = fgetc(in);
     ungetc(c, in);
     if (is_blank(c) || c == EOF || c == '(' || c == ')' || c == '.') {

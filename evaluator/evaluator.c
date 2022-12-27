@@ -18,7 +18,7 @@ static Object *next_arg(Object **args, bool final) {
     return arg;
 }
 
-Object *bind(Environment *e, Object *pars, Object *args) {
+static Object *bind(Environment *e, Object *pars, Object *args) {
     while (pars != NULL) {
         if (pars->type == SYMBOL) {
             dict_set(e->bindings, (Symbol *)pars, args);
@@ -52,7 +52,7 @@ Object *bind(Environment *e, Object *pars, Object *args) {
     return NULL;
 }
 
-Object *eval_args(Object *args, Environment *e) {
+static Object *eval_args(Object *args, Environment *e) {
     Object *head = NULL;
     Object **cursor = &head;
     while (args != NULL) {

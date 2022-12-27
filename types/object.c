@@ -75,7 +75,7 @@ void write(Object *obj, FILE *out) {
     }
 }
 
-Object *gc_head = NULL;
+static Object *gc_head = NULL;
 
 static void mark(Object *root) {
     while (root != NULL) {
