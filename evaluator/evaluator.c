@@ -1,5 +1,4 @@
 #include "evaluator.h"
-#include <string.h>
 
 bool tail_call = false;
 
