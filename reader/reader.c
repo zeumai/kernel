@@ -18,7 +18,7 @@ static Object *read_symbol(FILE *in) {
             capacity = (capacity == 0 ? 8 : capacity * 2);
             text = realloc(text, capacity);
             if (text == NULL) {
-                error("Reader: Allocation failure\nAborting");
+                fputs("Reader: Allocation failure\nAborting\n", stderr);
                 exit(EXIT_FAILURE);
             }
         }
@@ -72,7 +72,7 @@ static Object *read_string(FILE *in) {
             capacity = (capacity == 0 ? 8 : capacity * 2);
             text = realloc(text, capacity);
             if (text == NULL) {
-                error("Reader: Allocation failure\nAborting");
+                fputs("Reader: Allocation failure\nAborting\n", stderr);
                 exit(EXIT_FAILURE);
             }
         }
