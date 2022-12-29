@@ -4,14 +4,11 @@ bool tail_call = false;
 
 static Object *next_arg(Object **args, bool final) {
     if (*args == NULL) {
-        fputs("Evaluator: Too few args\n", stderr);
-        return error();
+        return error("Evaluator: Too few args");
     } else if ((*args)->type != PAIR) {
-        fputs("Evaluator: Improper arg list\n", stderr);
-        return error();
+        return error("Evaluator: Improper arg list");
     } else if (final && ((Pair *)(*args))->cdr != NULL) {
-        fputs("Evaluator: Too many args\n", stderr);
-        return error();
+        return error("Evaluator: Too many args");
     }
     Object *arg = ((Pair *)(*args))->car;
     *args = ((Pair *)(*args))->cdr;
@@ -25,29 +22,18 @@ static Object *bind(Environment *e, Object *pars, Object *args) {
             return NULL;
         } else if (pars->type == PAIR) {
             if (args == NULL || args->type != PAIR) {
-                fputs("Evaluator: Cannot bind parameter tree ", stderr);
-                write(pars, stderr);
-                fputs(" to argument tree ", stderr);
-                write(args, stderr);
-                fputs("\n", stderr);
-                return error();
+                return error("Evaluator: Cannot bind parameter tree % to argument tree %", pars, args);
             }
             Object *tmp = bind(e, ((Pair *)pars)->car, ((Pair *)args)->car);
             if (is_error(tmp)) return tmp;
             pars = ((Pair *)pars)->cdr;
             args = ((Pair *)args)->cdr;
         } else {
-            fputs("Evaluator: Malformed parameter tree: ", stderr);
-            write(pars, stderr);
-            fputs("\n", stderr);
-            return error();
+            return error("Evaluator: Malformed parameter tree: %", pars);
         }
     }
     if (args != NULL) {
-        fputs("Evaluator: Unbound argument tree: ", stderr);
-        write(args, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Unbound argument tree: %", args);
     }
     return NULL;
 }
@@ -71,10 +57,7 @@ Object *p_if(Object *args, Environment *e) {
     tmp = eval(next_arg(&args, false), e);
     if (is_error(tmp)) return tmp;
     if (tmp == NULL || tmp->type != BOOLEAN) {
-        fputs("Evaluator: Not a boolean: ", stderr);
-        write(tmp, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a boolean: %", tmp);
     }
     if (((Boolean *)tmp)->value) {
         ret = next_arg(&args, false);
@@ -127,9 +110,7 @@ Object *p_lambda(Object *args, Environment *e) {
 Object *p_throw(Object *args, Environment *e) {
     Object *msg = next_arg(&args, true);
     if (is_error(msg)) return msg;
-    write(msg, stderr);
-    fputs("\n", stderr);
-    return error();
+    return error("%", msg);
 }
 
 Object *p_eq(Object *args, Environment *e) {
@@ -204,18 +185,12 @@ Object *p_plus(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return number(((Number *)left)->value + ((Number *)right)->value);
 }
@@ -224,18 +199,12 @@ Object *p_minus(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return number(((Number *)left)->value - ((Number *)right)->value);
 }
@@ -244,18 +213,12 @@ Object *p_times(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return number(((Number *)left)->value * ((Number *)right)->value);
 }
@@ -264,18 +227,12 @@ Object *p_num_eq(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return boolean(((Number *)left)->value == ((Number *)right)->value);
 }
@@ -284,18 +241,12 @@ Object *p_num_less(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return boolean(((Number *)left)->value < ((Number *)right)->value);
 }
@@ -304,18 +255,12 @@ Object *p_num_leq(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return boolean(((Number *)left)->value <= ((Number *)right)->value);
 }
@@ -324,18 +269,12 @@ Object *p_num_greater(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return boolean(((Number *)left)->value > ((Number *)right)->value);
 }
@@ -344,18 +283,12 @@ Object *p_num_geq(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", right);
     }
     return boolean(((Number *)left)->value >= ((Number *)right)->value);
 }
@@ -364,18 +297,12 @@ Object *p_concat(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", right);
     }
     return string_concat(((String *)left)->text, ((String *)right)->text);
 }
@@ -384,10 +311,7 @@ Object *p_str_length(Object *args, Environment *e) {
     Object *s = next_arg(&args, true);
     if (is_error(s)) return s;
     if (s == NULL || s->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(s, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", s);
     }
     return number(((String *)s)->length);
 }
@@ -396,37 +320,27 @@ Object *p_substr(Object *args, Environment *e) {
     Object *s = next_arg(&args, false);
     if (is_error(s)) return s;
     if (s == NULL || s->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(s, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", s);
     }
     Object *start = next_arg(&args, false);
     if (is_error(start)) return start;
     if (start == NULL || start->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(start, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", start);
     }
     Object *length = next_arg(&args, true);
     if (is_error(length)) return length;
     if (length == NULL || length->type != NUMBER) {
-        fputs("Evaluator: Not a number: ", stderr);
-        write(length, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a number: %", length);
     }
     if ((((Number *)start)->value < 1) 
         || (((Number *)start)->value + ((Number *)length)->value - 1 > ((String *)s)->length)) {
-        fputs("Evaluator: Invalid substring:\n   Source string:    ", stderr);
-        write(s, stderr);
-        fputs("\n   Substring start:  ", stderr);
-        write(start, stderr);
-        fputs("\n   Substring length: ", stderr);
-        write(length, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error(
+            "Evaluator: Invalid substring:\n"
+            "   Source string:      %\n"
+            "   Substring start:    %\n"
+            "   Substring length:   %",
+            s, start, length
+        );
     }
     return string_substring(((String *)s)->text, ((Number *)start)->value, ((Number *)length)->value);
 }
@@ -435,18 +349,12 @@ Object *p_str_eq(Object *args, Environment *e) {
     Object *left = next_arg(&args, false);
     if (left != NULL && left->type == ERROR) return left;
     if (left == NULL || left->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(left, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", left);
     }
     Object *right = next_arg(&args, true);
     if (right != NULL && right->type == ERROR) return right;
     if (right == NULL || right->type != STRING) {
-        fputs("Evaluator: Not a string: ", stderr);
-        write(right, stderr);
-        fputs("\n", stderr);
-        return error();
+        return error("Evaluator: Not a string: %", right);;
     }
     size_t length = ((String *)left)->length;
     if (length != ((String *)right)->length) {
@@ -470,10 +378,7 @@ static Object *resolve(Symbol *s, Environment *e) {
         if (slot != NULL) return *slot;
         e = e->parent;
     }
-    fputs("Evaluator: Undefined symbol: ", stderr);
-    write((Object *)s, stderr);
-    fputs("\n", stderr);
-    return error();
+    return error("Evaluator: Undefined symbol: %", (Object *)s);
 }
 
 Object *eval(Object *obj, Environment *e) {
@@ -488,8 +393,7 @@ START_EVAL:
         Object *args = ((Pair *)obj)->cdr;
 START_APPLY:
         if (fn == NULL) {
-            fputs("Evaluator: () is not a function\n", stderr);
-            return error();
+            return error("Evaluator: % is not a function", fn);
         } else if (fn->type == PRIMITIVE) {
             obj = ((Primitive *)fn)->function(args, e);
             if (tail_call) {
@@ -509,10 +413,7 @@ START_APPLY:
             if (is_error(tmp)) return tmp;
             goto START_EVAL;
         } else {
-            fputs("Evaluator: ", stderr);
-            write(fn, stderr);
-            fputs(" is not a function\n", stderr);
-            return error();
+            return error("Evaluator: % is not a function", fn);
         }
     } else {
         return obj;

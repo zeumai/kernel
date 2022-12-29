@@ -18,7 +18,7 @@ static Object *read_symbol(FILE *in) {
             capacity = (capacity == 0 ? 8 : capacity * 2);
             text = realloc(text, capacity);
             if (text == NULL) {
-                fputs("Reader: Allocation failure\nAborting\n", stderr);
+                error("Reader: Allocation failure\nAborting");
                 exit(EXIT_FAILURE);
             }
         }
@@ -42,8 +42,7 @@ static Object *read_list(FILE *in) {
             return list;
         } else if (c == '.') {
             if (cursor == NULL) {
-                fputs("Reader: Unexpected '.'\n", stderr);
-                return error();
+                return error("Reader: Unexpected '.'");
             }
             if (is_error(cursor->cdr = read(in))) {
                 return cursor->cdr;
@@ -62,10 +61,7 @@ static Object *read_list(FILE *in) {
             }
         }
     }
-    fputs("Reader: Unterminated list: ", stderr);
-    write(list, stderr);
-    fputs("\n", stderr);
-    return error();
+    return error("Reader: Unterminated list: %", list);
 }
 
 static Object *read_string(FILE *in) {
@@ -76,7 +72,7 @@ static Object *read_string(FILE *in) {
             capacity = (capacity == 0 ? 8 : capacity * 2);
             text = realloc(text, capacity);
             if (text == NULL) {
-                fputs("Reader: Allocation failure\nAborting\n", stderr);
+                error("Reader: Allocation failure\nAborting");
                 exit(EXIT_FAILURE);
             }
         }
@@ -89,8 +85,7 @@ static Object *read_string(FILE *in) {
             text[i++] = c;
         }
     }
-    fputs("Reader: Unterminated string", stderr);
-    return error();
+    return error("Reader: Unterminated string");
 }
 
 static Object *read_number(FILE *in) {
@@ -105,8 +100,7 @@ static Object *read_number(FILE *in) {
         } else if (c == ',') {
             continue;
         } else {
-            fprintf(stderr, "Reader: Non-numeric character in number literal: '%c'\n", c);
-            return error();
+            return error("Reader: Non-numeric character in number literal");
         }
     }
 }
@@ -116,8 +110,7 @@ static Object *read_special(FILE *in) {
     int c = skip_blanks(in);
     if (c == '<') {
         while ((c = fgetc(in)) != '>');
-        fputs("Reader: Unreadable representation\n", stderr);
-        return error();
+        return error("Reader: Unreadable representation");
     }
     ungetc(c, in);
     Object *s = read(in);
@@ -127,10 +120,7 @@ static Object *read_special(FILE *in) {
     } else if (s == (f ? f : (f = symbol("f")))) {
         return boolean(false);
     }
-    fputs("Reader: Not a special dispatch symbol: ", stderr);
-    write(s, stderr);
-    fputs("\n", stderr);
-    return error();
+    return error("Reader: Not a special dispatch symbol: %", s);
 }
 
 static Object *read_dash(FILE *in) {
@@ -153,11 +143,9 @@ Object *read(FILE *in) {
     } else if (c == '(') {
         return read_list(in);
     } else if (c == ')') {
-        fputs("Reader: Unexpected ')'\n", stderr);
-        return error();
+        return error("Reader: Unexpected ')'");
     } else if (c == '.') {
-        fputs("Reader: Unexpected '.'\n", stderr);
-        return error();
+        return error("Reader: Unexpected '.'");
     } else if (c == '\"') {
         return read_string(in);
     } else if (c == '#') {

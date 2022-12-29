@@ -89,7 +89,7 @@ typedef struct Error {
     Object obj;
 } Error;
 
-Object *error(void);
+Object *error(char *fmt, ...);
 
 bool is_error(Object *obj);
 
